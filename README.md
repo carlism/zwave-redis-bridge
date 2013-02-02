@@ -1,3 +1,9 @@
+zwave-redis-bridge
+==================
+
+Bridge zwave data to redis' keystore and events and commands to redis' pub/sub channels
+
+
 The open-zwave library is written in c++ and provides access to a USB zwave controller.  This library bridges
 that acces over to an instance of a redis database.  Once the bridge is established you can interface with
 your zwave network using any redis client.  For my purposes I wanted to present the state of my zwave
