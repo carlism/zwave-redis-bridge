@@ -21,16 +21,29 @@ DEBUG_CFLAGS    := -Wall -Wno-format -g -DDEBUG
 RELEASE_CFLAGS  := -Wall -Wno-unknown-pragmas -Wno-format -O3
 
 DEBUG_LDFLAGS	:= -g
+UNAME := $(shell uname)
 
 # Change for DEBUG or RELEASE
+
+ifeq ($(UNAME), Darwin)
+ARCH :=  -arch x86_64
+CFLAGS	:= -c -DDARWIN $(DEBUG_CFLAGS) $(ARCH)
+SYSTEM := mac
+OTHER_LIBS := -lboost_thread-mt -lboost_system-mt -framework IOKit -framework CoreFoundation $(ARCH)
+endif
+ifeq ($(UNAME), Linux)
 CFLAGS	:= -c $(DEBUG_CFLAGS)
+SYSTEM := linux
+OTHER_LIBS := -lboost_thread-mt -ludev
+endif
+
 LDFLAGS	:= $(DEBUG_LDFLAGS)
 
 INCLUDES	:= -I $(OPEN_ZWAVE_SRC) -I $(OPEN_ZWAVE_SRC)/command_classes/ \
     -I $(OPEN_ZWAVE_SRC)/value_classes/ -I $(OPEN_ZWAVE_SRC)/platform/  \
     -I $(OPEN_ZWAVE)/h/platform/unix -I $(OPEN_ZWAVE)/tinyxml/ \
     -I $(OPEN_ZWAVE)/hidapi/hidapi/ -I $(REDIS_CLIENT)/
-LIBS = $(wildcard $(OPEN_ZWAVE)/lib/linux/*.a $(REDIS_CLIENT)/*.a)
+LIBS = $(wildcard $(OPEN_ZWAVE)/lib/$(SYSTEM)/*.a $(REDIS_CLIENT)/*.a)
 
 %.o : %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $@ $<
@@ -38,10 +51,10 @@ LIBS = $(wildcard $(OPEN_ZWAVE)/lib/linux/*.a $(REDIS_CLIENT)/*.a)
 all: redis-bridge
 
 lib:
-	$(MAKE) -C ../build/linux
+	$(MAKE) -C $(OPEN_ZWAVE)/build/$(SYSTEM)
 
 redis-bridge:	Main.o lib
-	$(LD) -o $@ $(LDFLAGS) $< $(LIBS) -pthread -ludev -lboost_thread-mt
+	$(LD) -o $@ $(LDFLAGS) $< $(LIBS) -pthread $(OTHER_LIBS)
 
 clean:
 	rm -f redis-bridge Main.o

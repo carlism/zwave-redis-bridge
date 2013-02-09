@@ -341,7 +341,6 @@ int main( int argc, char* argv[] )
     boost::shared_ptr<redis::client> shared_c;
     shared_c = boost::shared_ptr<redis::client>( new redis::client("localhost") );
 	redis::client & c = *shared_c;
-    c.select(3); //because it's the magic number
     c.flushdb();
 
 	pthread_mutexattr_t mutexattr;
@@ -424,7 +423,6 @@ int main( int argc, char* argv[] )
 		boost::shared_ptr<redis::client> shared_listen_c;
 		shared_listen_c = boost::shared_ptr<redis::client>( new redis::client("localhost") );
 		redis::client & listen_c = *shared_listen_c;
-		listen_c.select(3); //because it's the magic number
 
 	 	static std::vector<std::string> channels = boost::assign::list_of("name")("location")("control")("turn_on")("turn_off")("set_level");
 		struct my_subscriber : redis::client::subscriber {
