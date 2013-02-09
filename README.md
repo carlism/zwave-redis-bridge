@@ -69,3 +69,17 @@ On start up
 6. tells the usb controller to enable polling on all the basic values on each node
 7. makes a second redis connection and establishes a set of subscriptions to channels for processing incoming commands
 
+Command Channels Supported
+--------------------------
+
+Channel              | Messsage Format    | Function
+-------              | ---------------    | --------
+zw_turn_on_node      | home:node          | switches on the device on the node specified
+zw_turn_off_node     | home:node          | switches off the device on the node specified
+zw_set_node_level    | home:node:level    | sets the level of the node (used for dimmer switches and the like)
+zw_set_node_name     | home:node:name     | sets the name value for the node
+zw_set_node_location | home:node:location | sets the location value for the node
+
+ZWave Notification Events Handled
+---------------------------------
+

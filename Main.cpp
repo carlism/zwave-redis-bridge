@@ -356,13 +356,13 @@ int main( int argc, char* argv[] )
 	// The first argument is the path to the config files (where the manufacturer_specific.xml file is located
 	// The second argument is the path for saved Z-Wave network state and the log file.  If you leave it NULL
 	// the log file will appear in the program's working directory.
-	Options::Create( "../../config/", "", "" );
+	Options::Create( "../open-zwave/config/", "", "" );
 	Options::Get()->AddOptionInt( "SaveLogLevel", LogLevel_Info );
 	Options::Get()->AddOptionInt( "QueueLogLevel", LogLevel_Info );
 	Options::Get()->AddOptionInt( "DumpTrigger", LogLevel_Error );
 	Options::Get()->AddOptionInt( "PollInterval", 1500 );
 	Options::Get()->AddOptionBool( "IntervalBetweenPolls", true );
-	Options::Get()->AddOptionBool("ValidateValueChanges", true);
+	Options::Get()->AddOptionBool( "ValidateValueChanges", true);
 	Options::Get()->Lock();
 
 	Manager::Create();
@@ -433,25 +433,25 @@ int main( int argc, char* argv[] )
 		      		std::cout << channel << " :: " << msg << std::endl;
 		      		uint32 homeId = parseMessageHomeId(msg);
 		      		uint8 nodeId = parseMessageNodeId(msg);
-		      		if (channel == "turn_on") {
+		      		if (channel == "zw_turn_on_node") {
 		      			std::cout << "Turning on home:"<<idString(homeId)<<" node:"<<idString(nodeId)<<endl;
 		      			Manager::Get()->SetNodeOn( homeId, nodeId );
-		      		} else if (channel == "turn_off") {
+		      		} else if (channel == "zw_turn_off_node") {
 		      			std::cout << "Turning off home:"<<idString(homeId)<<" node:"<<idString(nodeId)<<endl;
 		      			Manager::Get()->SetNodeOff( homeId, nodeId );
-		      		} else if (channel == "set_level") {
+		      		} else if (channel == "zw_set_node_level") {
 		      			uint8 level = parseMessageLevel(msg);
 		      			std::cout << "Setting level home:"<<idString(homeId)<<" node:"<<idString(nodeId)<<" to:"<<idString(level)<<endl;
 		      			Manager::Get()->SetNodeLevel( homeId, nodeId, level );
-		      		} else if (channel == "name") {
+		      		} else if (channel == "zw_set_node_name") {
 		      			string name = parseMessageString(msg, 2);
 		      			std::cout << "Setting name home:"<<idString(homeId)<<" node:"<<idString(nodeId)<<" to:"<<name<<endl;
 		      			Manager::Get()->SetNodeName( homeId, nodeId, name );
-		      		} else if (channel == "location") {
+		      		} else if (channel == "zw_set_node_location") {
 		      			string location = parseMessageString(msg, 2);
 		      			std::cout << "Setting location home:"<<idString(homeId)<<" node:"<<idString(nodeId)<<" to:"<<location<<endl;
 		      			Manager::Get()->SetNodeLocation( homeId, nodeId, location );
-		      		} else if (channel == "control") {
+		      		} else if (channel == "zw_control") {
 						if (msg == "exit") {
 							client.unsubscribe(channels);
 						}
