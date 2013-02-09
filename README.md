@@ -83,3 +83,6 @@ zw_set_node_location | home:node:location | sets the location value for the node
 ZWave Notification Events Handled
 ---------------------------------
 
+zw_home:|home|
+zw_node:|home|:|node|
+zw_value:|home|:|node|:|value|

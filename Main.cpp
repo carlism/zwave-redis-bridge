@@ -88,7 +88,7 @@ string idString(uint64 id) {
 	return stream.str();
 }
 
-string nodeKey(Notification const* _notification) {
+string nodeString(Notification const* _notification) {
   string key = "";
 	key += idString(_notification->GetHomeId());
 	key += ":";
@@ -96,8 +96,21 @@ string nodeKey(Notification const* _notification) {
 	return key;
 }
 
+string homeKey(Notification const* _notification) {
+	string key = "zw_home:";
+	key += idString(_notification->GetHomeId());
+	return key;
+}
+
+string nodeKey(Notification const* _notification) {
+	string key = "zw_node:";
+	key += nodeString(_notification);
+	return key;
+}
+
 string valueKey(Notification const* _notification) {
-  string key = nodeKey(_notification);
+	string key = "zw_value:";
+	key += nodeString(_notification);
 	key += ":";
 	key += idString(_notification->GetValueID().GetId());
 	return key;
@@ -424,7 +437,8 @@ int main( int argc, char* argv[] )
 		shared_listen_c = boost::shared_ptr<redis::client>( new redis::client("localhost") );
 		redis::client & listen_c = *shared_listen_c;
 
-	 	static std::vector<std::string> channels = boost::assign::list_of("name")("location")("control")("turn_on")("turn_off")("set_level");
+	 	static std::vector<std::string> channels = boost::assign::list_of("zw_set_node_name")("zw_set_node_location")
+	 		("zw_control")("zw_turn_on_node")("zw_turn_off_node")("zw_set_node_level");
 		struct my_subscriber : redis::client::subscriber {
 			void subscribe(redis::client& client, const std::string& channel, int subscriptions) {
 				std::cout << "Subscribed to #"<< channel << " (" << subscriptions << " subscriptions)" << std::endl;
