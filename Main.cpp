@@ -193,7 +193,7 @@ void OnNotification
 			string str;
 			if( Manager::Get()->GetValueAsString( _notification->GetValueID(), &str ) ) {
 				c.hset( key.c_str(), "initial_value", str);
-				c.publish("value_add", key);
+				c.publish("zw_value_add", key);
 				c.hset( nodeKey(_notification), "v_"+Manager::Get()->GetValueLabel(_notification->GetValueID()), str );
 			}
 
@@ -211,7 +211,7 @@ void OnNotification
 		{
 			string key = valueKey(_notification);
 			c.del( key.c_str() );
-			c.publish("value_delete", key);
+			c.publish("zw_value_delete", key);
 
 			// Remove the value from our poll list
 			for( list<ValueID>::iterator it = poll_values.begin(); it != poll_values.end(); ++it ) {
@@ -229,7 +229,7 @@ void OnNotification
 			string str;
 			if( Manager::Get()->GetValueAsString( _notification->GetValueID(), &str ) ) {
 				c.hset( key.c_str(), "updated_value", str);
-				c.publish("value_update", key);
+				c.publish("zw_value_update", key);
 				c.hset( nodeKey(_notification), "v_"+Manager::Get()->GetValueLabel(_notification->GetValueID()), str );
 			}
 			break;
@@ -262,7 +262,7 @@ void OnNotification
 			c.hset(key, "isAwake", Manager::Get()->IsNodeAwake(_notification->GetHomeId(), _notification->GetNodeId()) ? "true" : "false");
 			c.hset(key, "isFailed", Manager::Get()->IsNodeFailed(_notification->GetHomeId(), _notification->GetNodeId()) ? "true" : "false");
 			c.hset(key, "value", idString(_notification->GetByte()));
-			c.publish("node_add", key);
+			c.publish("zw_node_add", key);
 			break;
 		}
 
@@ -270,7 +270,7 @@ void OnNotification
 		{
 			string key = nodeKey(_notification);
 			c.del( key );
-			c.publish("node_delete", key);
+			c.publish("zw_node_delete", key);
 			// Remove the node from our list
 			for( list<ValueID>::iterator it = poll_values.begin(); it != poll_values.end(); ++it ) {
 				if( (*it).GetHomeId() == _notification->GetHomeId() &&
@@ -286,7 +286,7 @@ void OnNotification
 			// basic_set or hail message.
 			string key = nodeKey(_notification);
 			c.hset(key, "value", idString(_notification->GetByte()));
-			c.publish("node_update", key);
+			c.publish("zw_node_update", key);
 			break;
 		}
 
@@ -325,7 +325,7 @@ void OnNotification
 			string key = nodeKey(_notification);
 			c.hset(key, "nodeName", Manager::Get()->GetNodeName(_notification->GetHomeId(), _notification->GetNodeId()));
 			c.hset(key, "nodeLocation", Manager::Get()->GetNodeLocation(_notification->GetHomeId(), _notification->GetNodeId()));
-			c.publish("node_named", key);
+			c.publish("zw_node_named", key);
 			break;
 		}
 		case Notification::Type_Notification:
@@ -354,7 +354,7 @@ int main( int argc, char* argv[] )
     boost::shared_ptr<redis::client> shared_c;
     shared_c = boost::shared_ptr<redis::client>( new redis::client("localhost") );
 	redis::client & c = *shared_c;
-    c.flushdb();
+	c.flushdb();
 
 	pthread_mutexattr_t mutexattr;
 
@@ -403,7 +403,7 @@ int main( int argc, char* argv[] )
 		Manager::Get()->AddDriver( port );
 	}
 	c.set("port", port);
-    cout << "port: " << c.get("port");
+	cout << "port: " << c.get("port");
 
 	// Now we just wait for either the AwakeNodesQueried or AllNodesQueried notification,
 	// then write out the config file.
