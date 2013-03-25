@@ -134,7 +134,7 @@ uint8 parseMessageField(string message, int field) {
 	 	break;
 	}
     }
-    return convert >> result ? result : 0;
+    return convert >> std::hex >> result ? result : 0;
 }
 
 uint8 parseMessageNodeId(string message) {
@@ -369,8 +369,8 @@ int main( int argc, char* argv[] )
 	// The second argument is the path for saved Z-Wave network state and the log file.  If you leave it NULL
 	// the log file will appear in the program's working directory.
 	Options::Create( getenv ("OPEN_ZWAVE_CONFIG"), "", "" );
-	Options::Get()->AddOptionInt( "SaveLogLevel", LogLevel_Info );
-	Options::Get()->AddOptionInt( "QueueLogLevel", LogLevel_Info );
+	Options::Get()->AddOptionInt( "SaveLogLevel", LogLevel_Error );
+	Options::Get()->AddOptionInt( "QueueLogLevel", LogLevel_Error );
 	Options::Get()->AddOptionInt( "DumpTrigger", LogLevel_Error );
 	Options::Get()->AddOptionInt( "PollInterval", 1500 );
 	Options::Get()->AddOptionBool( "IntervalBetweenPolls", true );
